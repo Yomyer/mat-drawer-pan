@@ -1,0 +1,24 @@
+<mat-drawer-container class="example-container" mat-drawer-swipe>
+  <mat-drawer #drawer class="example-sidenav" mode="push">
+    <p>Auto-resizing sidenavd asda sdas as as</p>
+    <button (click)="showFiller = !showFiller" mat-raised-button>
+      Toggle extra text
+    </button>
+  </mat-drawer>
+
+    <mat-drawer #drawer2 class="example-sidenav" mode="push" position="end">
+    <p>Auto-resizing sidenavd asda sdas as as</p>
+    <button (click)="showFiller = !showFiller" mat-raised-button>
+      Toggle extra text
+    </button>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button>
+    <button type="button" mat-button (click)="drawer2.toggle()">
+      Toggle sidenav
+    </button>
+  </div>
+</mat-drawer-container>
