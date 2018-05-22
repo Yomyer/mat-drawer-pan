@@ -1,10 +1,12 @@
 import { Directive, HostListener, HostBinding, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
 import { MatDrawerContainer } from '@angular/material';
+import 'hammerjs';
 
 @Directive({
-  selector: '[mat-drawer-swipe]'
+  selector: '[mat-drawer-pan]',
+  exportAs: 'mat-drawer-pan'
 })
-export class MatDrawerSwipeDirective implements AfterViewInit {
+export class MatDrawerPanDirective implements AfterViewInit {
   action = 50;
   offset = 50;
   width = 200;

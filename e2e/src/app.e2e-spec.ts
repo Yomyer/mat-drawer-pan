@@ -1,10 +1,10 @@
-import { AngularTemplatePage } from './app.po';
+import { AppPage } from './app.po';
 
-describe('angular-template App', () => {
-  let page: AngularTemplatePage;
+describe('workspace-project App', () => {
+  let page: AppPage;
 
   beforeEach(() => {
-    page = new AngularTemplatePage();
+    page = new AppPage();
   });
 
   it('should display welcome message', () => {
