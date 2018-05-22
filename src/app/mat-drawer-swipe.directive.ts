@@ -10,9 +10,13 @@ export class MatDrawerSwipeDirective implements AfterViewInit {
   width = 200;
   current = null;
   active = false;
+  isOpen = false;
 
   get backdrop() {
-    return this.el.nativeElement.querySelector('.mat-drawer-backdrop');
+    if (this.drawer.hasBackdrop) {
+      return this.el.nativeElement.querySelector('.mat-drawer-backdrop');
+    }
+    return null;
   }
 
   get content() {
@@ -25,12 +29,10 @@ export class MatDrawerSwipeDirective implements AfterViewInit {
   swipe(e) {
     const starX = e.changedPointers[0].pageX - e.deltaX;
     this.active = false;
-    //console.log(e.deltaX);
-    //console.log(this.drawer.start._width);
-    //console.log(this.drawer.end);
+    this.isOpen = false;
 
     // Open Drawer Start
-    if (e.deltaX >= 0 && starX <= this.action) {
+    if (e.deltaX >= 0 && starX <= this.action && !this.drawer.end.opened) {
       if ((!this.current || e.deltaX <= this.current._width + this.offset)) {
         this.moveContent(e.deltaX);
       }
@@ -55,18 +57,33 @@ export class MatDrawerSwipeDirective implements AfterViewInit {
 
   @HostListener('panend', ['$event'])
   panend(e) {
-    console.log("pandend");
     if (!this.active) {
       return;
     }
 
-    console.log(e.deltaX >= this.current._width / 3);
-    if (e.deltaX >= this.current._width / 3) {
-      this.moveContent(this.current._width);
-      this.drawer.start.open();
+    if (Math.abs(e.velocityX) >= 1) {
+      if (e.velocityX >= 0) {
+        this.moveContent(this.current._width);
+        this.current.open();
+      } else {
+        this.close();
+        this.drawer.close();
+      }
     } else {
-      this.close();
-      this.drawer.close();
+      let des = e.deltaX;
+      if (des <= 0) {
+        des = this.current._width + des;
+      }
+      if (des >= this.current._width / 3) {
+        this.moveContent(this.current._width);
+        this.current.open();
+        setTimeout(() => {
+          this.isOpen = true;
+        });
+      } else {
+        this.close();
+        this.drawer.close();
+      }
     }
   }
 
@@ -75,34 +92,71 @@ export class MatDrawerSwipeDirective implements AfterViewInit {
     private render: Renderer2,
     private drawer: MatDrawerContainer
   ) {
-    console.log(this.el.nativeElement);
+
   }
   ngAfterViewInit() {
-    this.render.setStyle(this.backdrop, 'transition-duration', '.4s');
-    this.render.setStyle(this.backdrop, 'transition-timing-function', 'cubic-bezier(.25,.8,.25,1)');
-    this.render.setStyle(this.backdrop, 'transition-property', 'background-color,visibility,transform,margin-left,margin-right');
+    if (this.drawer.hasBackdrop) {
+      this.render.setStyle(this.backdrop, 'transition-duration', '.4s');
+      this.render.setStyle(this.backdrop, 'transition-timing-function', 'cubic-bezier(.25,.8,.25,1)');
+      this.render.setStyle(this.backdrop, 'transition-property', 'opacity,background-color,visibility,transform,margin-left,margin-right');
+      this.render.setStyle(this.backdrop, 'background-color', 'rgba(0,0,0,.6)');
+      this.render.setStyle(this.backdrop, 'opacity', 0);
+    }
 
     this.drawer.start.closedStart.subscribe(() => {
       this.close();
     });
     this.drawer.start.openedStart.subscribe(() => {
-      this.open();
+      this.open(this.drawer.start);
+    });
+
+    this.drawer.end.closedStart.subscribe(() => {
+      this.close();
+    });
+    this.drawer.end.openedStart.subscribe(() => {
+      this.open(this.drawer.end);
+    });
+
+    this.drawer.start.disableClose = true;
+    this.drawer.end.disableClose = true;
+
+    this.drawer.backdropClick.subscribe((e) => {
+      if (this.isOpen) {
+        this.drawer.close();
+      }
     });
   }
 
   close() {
     this.moveContent(0);
+    this.isOpen = false;
   }
 
-  open() {
-    this.current = this.drawer.start;
+  open(drawer) {
+    this.current = drawer;
     this.moveContent(this.current._width);
+    this.isOpen = true;
   }
 
   moveContent(position) {
+    if (this.current && this.current._position === 'end') {
+      position *= -1;
+    }
+
+    const opacity = Math.abs(this.current ? (position * 100) / this.current._width : 0);
+
     this.render.setStyle(this.content, 'marginLeft', position + 'px');
     this.render.setStyle(this.content, 'marginRight', (-position) + 'px');
-    this.render.setStyle(this.backdrop, 'marginLeft', position + 'px');
-    this.render.setStyle(this.backdrop, 'marginRight', (-position) + 'px');
+    if (this.drawer.hasBackdrop) {
+      this.render.setStyle(this.backdrop, 'marginLeft', position + 'px');
+      this.render.setStyle(this.backdrop, 'marginRight', (-position) + 'px');
+
+      this.render.setStyle(this.backdrop, 'opacity', opacity / 100);
+      if (opacity >= 5) {
+        this.render.setStyle(this.backdrop, 'visibility', 'visible');
+      } else {
+        this.render.setStyle(this.backdrop, 'visibility', 'hidden');
+      }
+    }
   }
 }
