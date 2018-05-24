@@ -1,7 +1,7 @@
 # @yomyer/mat-drawer-pan
 
 
-Add to the Mat Drawer Container the possibility of showing the Drawers using the horizontal pan gesture
+Add to the Mat Drawer Container the possibility of showing the Drawers using the horizontal pan gesture. Compatible with Angular Material 6
 
 ### Installation
 
@@ -75,7 +75,7 @@ Import it in your Angular project as a module
     
   | Parameter | Description | Values |
   | --- | --- | --- |
-  | `mat-drawer-container` (required) | Selector for the directive. | boolean (defaults to `true`)
+  | `mat-drawer-pan` (required) | Selector for the directive. | boolean (defaults to `true`)
 
 
 ### Development
