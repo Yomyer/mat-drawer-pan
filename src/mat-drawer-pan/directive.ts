@@ -53,6 +53,14 @@ export class MatDrawerPanDirective implements AfterViewInit {
       this.active = true;
     }
 
+    // Open Drawer End
+    if (e.deltaX <= this.content.offsetWidth && starX >= this.content.offsetWidth - this.action && !this.drawer.end.opened) {
+      if ((!this.current || e.deltaX >= this.current._width + this.offset)) {
+        this.moveContent(e.deltaX);
+      }
+    }
+
+
 
     e.preventDefault();
   }
