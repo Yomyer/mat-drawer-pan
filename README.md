@@ -1,6 +1,7 @@
 # @yomyer/mat-drawer-pan
 
 
+Add to the Mat Drawer Container the possibility of showing the Drawers using the horizontal pan gesture
 
 ### Installation
 
@@ -25,16 +26,45 @@ Import it in your Angular project as a module
     })
     
     ```
+2) Add hammerjs in your angular proyect
+    ```sh
+    "projects": {
+      "architect": {
+        "build": {
+          "options": { 
+            "scripts": [
+              ...
+              "node_modules/hammerjs/hammer.js" 
+              ... 
+            ]
     
-2) Use it in a component
+    ```
+
+3) Use it in a component
     
-    **The element that contains this directive should have a CSS width!**
+    **Add mat-drawer-pan in mat-drawer-container!**
     ```sh
    import {Component} from '@angular/core';
    
     @Component({
       selector: 'drawer',
       template: `
+          <mat-drawer-container class="example-container" mat-drawer-pan>
+            <mat-drawer #start class="example-sidenav" mode="push">
+               <p>Auto-resizing sidenavd start</p>
+            </mat-drawer>
+            <mat-drawer #end class="example-sidenav" mode="push" position="end">
+              <p>Auto-resizing sidenavd end</p>
+            </mat-drawer>
+            <div class="example-sidenav-content">
+              <button type="button" mat-button (click)="start.toggle()">
+                Toggle sidenav start
+              </button>
+              <button type="button" mat-button (click)="end.toggle()">
+                Toggle sidenav end
+              </button>
+            </div>
+          </mat-drawer-container>
         `
     })
     
@@ -45,7 +75,7 @@ Import it in your Angular project as a module
     
   | Parameter | Description | Values |
   | --- | --- | --- |
-  | `fittext` (required) | Selector for the directive. | boolean (defaults to `true`)
+  | `mat-drawer-container` (required) | Selector for the directive. | boolean (defaults to `true`)
 
 
 ### Development

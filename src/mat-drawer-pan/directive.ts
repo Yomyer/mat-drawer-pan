@@ -3,12 +3,12 @@ import { MatDrawerContainer } from '@angular/material';
 import 'hammerjs';
 
 @Directive({
-  selector: '[mat-drawer-pan]',
+  selector: 'mat-drawer-container[mat-drawer-pan]',
   exportAs: 'mat-drawer-pan'
 })
 export class MatDrawerPanDirective implements AfterViewInit {
   action = 50;
-  offset = 50;
+  offset = 30;
   width = 200;
   current = null;
   active = false;
@@ -34,8 +34,8 @@ export class MatDrawerPanDirective implements AfterViewInit {
     this.isOpen = false;
 
     // Open Drawer Start
-    if (e.deltaX >= 0 && starX <= this.action && !this.drawer.end.opened) {
-      if ((!this.current || e.deltaX <= this.current._width + this.offset)) {
+    if (e.deltaX > 0 && starX <= this.action && !this.drawer.end.opened) {
+      if (!this.current || e.deltaX <= this.current._width + this.offset) {
         this.moveContent(e.deltaX);
       }
 
@@ -54,13 +54,24 @@ export class MatDrawerPanDirective implements AfterViewInit {
     }
 
     // Open Drawer End
-    if (e.deltaX <= this.content.offsetWidth && starX >= this.content.offsetWidth - this.action && !this.drawer.end.opened) {
-      if ((!this.current || e.deltaX >= this.current._width + this.offset)) {
-        this.moveContent(e.deltaX);
+    if (e.deltaX < 0 && starX >= this.content.offsetWidth - this.action && !this.drawer.start.opened) {
+      if (!this.current || (e.deltaX * -1 <= this.current._width + this.offset)) {
+        this.moveContent(e.deltaX * -1);
       }
+      this.current = this.drawer.end;
+      this.render.setStyle(this.current._elementRef.nativeElement, 'visibility', 'visible');
+      this.active = true;
     }
 
-
+    // Close Drawer Start
+    if (e.deltaX > 0 && this.drawer.end.opened) {
+      let x = this.current._width - e.deltaX;
+      if (x <= 0) {
+        x = 0;
+      }
+      this.moveContent(x);
+      this.active = true;
+    }
 
     e.preventDefault();
   }
@@ -71,8 +82,16 @@ export class MatDrawerPanDirective implements AfterViewInit {
       return;
     }
 
-    if (Math.abs(e.velocityX) >= 1) {
-      if (e.velocityX >= 0) {
+    let des = e.deltaX;
+    let velocity = e.velocityX;
+
+    if (this.current._position === 'end') {
+      des = des * -1;
+      velocity = velocity * -1;
+    }
+
+    if (Math.abs(velocity) >= 1) {
+       if (velocity >= 0) {
         this.moveContent(this.current._width);
         this.current.open();
       } else {
@@ -80,10 +99,10 @@ export class MatDrawerPanDirective implements AfterViewInit {
         this.drawer.close();
       }
     } else {
-      let des = e.deltaX;
       if (des <= 0) {
         des = this.current._width + des;
       }
+
       if (des >= this.current._width / 3) {
         this.moveContent(this.current._width);
         this.current.open();

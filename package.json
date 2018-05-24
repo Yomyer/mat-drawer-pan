@@ -16,7 +16,6 @@
     "test": "cd dist && ls",
     "watch": "ng serve --port 3020 --open"
   },
-  "private": true,
   "dependencies": {
     "hammerjs": "2.0.8"
   },
