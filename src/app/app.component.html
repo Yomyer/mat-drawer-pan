@@ -1,25 +1,19 @@
-
 <mat-drawer-container class="example-container" mat-drawer-pan>
-  <mat-drawer #drawer class="example-sidenav" mode="push">
-    <p>Auto-resizing sidenavd asda sdas as as</p>
-    <button (click)="showFiller = !showFiller" mat-raised-button>
-      Toggle extra text
-    </button>
+  <mat-drawer #start class="example-sidenav" mode="push">
+    <p>Auto-resizing sidenavd start</p>
+
   </mat-drawer>
 
-    <mat-drawer #drawer2 class="example-sidenav" mode="push" position="end">
-    <p>Auto-resizing sidenavd asda sdas as as</p>
-    <button (click)="showFiller = !showFiller" mat-raised-button>
-      Toggle extra text
-    </button>
+  <mat-drawer #end class="example-sidenav" mode="push" position="end">
+    <p>Auto-resizing sidenavd end</p>
   </mat-drawer>
 
   <div class="example-sidenav-content">
-    <button type="button" mat-button (click)="drawer.toggle()">
-      Toggle sidenav
+    <button type="button" mat-button (click)="start.toggle()">
+      Toggle sidenav start
     </button>
-    <button type="button" mat-button (click)="drawer2.toggle()">
-      Toggle sidenav
+    <button type="button" mat-button (click)="end.toggle()">
+      Toggle sidenav end
     </button>
   </div>
 </mat-drawer-container>

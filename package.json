@@ -1,6 +1,6 @@
 {
   "name": "@yomyer/mat-drawer-pan",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "description": "Angular Material io Mat Drware with pan gesture",
   "author": "Yomyer New Line S.L.",

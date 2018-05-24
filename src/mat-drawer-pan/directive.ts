@@ -34,7 +34,7 @@ export class MatDrawerPanDirective implements AfterViewInit {
     this.isOpen = false;
 
     // Open Drawer Start
-    if (e.deltaX > 0 && starX <= this.action && !this.drawer.end.opened) {
+    if (this.drawer.start && e.deltaX > 0 && starX <= this.action && (!this.drawer.end || !this.drawer.end.opened)) {
       if (!this.current || e.deltaX <= this.current._width + this.offset) {
         this.moveContent(e.deltaX);
       }
@@ -44,7 +44,7 @@ export class MatDrawerPanDirective implements AfterViewInit {
       this.active = true;
     }
     // Close Drawer Start
-    if (e.deltaX < 0 && this.drawer.start.opened) {
+    if (e.deltaX < 0 && (this.drawer.start && this.drawer.start.opened)) {
       let x = this.current._width + e.deltaX;
       if (x <= 0) {
         x = 0;
@@ -54,7 +54,7 @@ export class MatDrawerPanDirective implements AfterViewInit {
     }
 
     // Open Drawer End
-    if (e.deltaX < 0 && starX >= this.content.offsetWidth - this.action && !this.drawer.start.opened) {
+    if (this.drawer.end && e.deltaX < 0 && starX >= this.content.offsetWidth - this.action && (!this.drawer.start || !this.drawer.start.opened)) {
       if (!this.current || (e.deltaX * -1 <= this.current._width + this.offset)) {
         this.moveContent(e.deltaX * -1);
       }
@@ -64,7 +64,7 @@ export class MatDrawerPanDirective implements AfterViewInit {
     }
 
     // Close Drawer Start
-    if (e.deltaX > 0 && this.drawer.end.opened) {
+    if (e.deltaX > 0 && (this.drawer.end && this.drawer.end.opened)) {
       let x = this.current._width - e.deltaX;
       if (x <= 0) {
         x = 0;
@@ -91,7 +91,7 @@ export class MatDrawerPanDirective implements AfterViewInit {
     }
 
     if (Math.abs(velocity) >= 1) {
-       if (velocity >= 0) {
+      if (velocity >= 0) {
         this.moveContent(this.current._width);
         this.current.open();
       } else {
@@ -132,22 +132,26 @@ export class MatDrawerPanDirective implements AfterViewInit {
       this.render.setStyle(this.backdrop, 'opacity', 0);
     }
 
-    this.drawer.start.closedStart.subscribe(() => {
-      this.close();
-    });
-    this.drawer.start.openedStart.subscribe(() => {
-      this.open(this.drawer.start);
-    });
+    if (this.drawer.start) {
+      this.drawer.start.closedStart.subscribe(() => {
+        this.close();
+      });
+      this.drawer.start.openedStart.subscribe(() => {
+        this.open(this.drawer.start);
+      });
+      this.drawer.start.disableClose = true;
 
-    this.drawer.end.closedStart.subscribe(() => {
-      this.close();
-    });
-    this.drawer.end.openedStart.subscribe(() => {
-      this.open(this.drawer.end);
-    });
+    }
+    if (this.drawer.end) {
+      this.drawer.end.closedStart.subscribe(() => {
+        this.close();
+      });
+      this.drawer.end.openedStart.subscribe(() => {
+        this.open(this.drawer.end);
+      });
+      this.drawer.end.disableClose = true;
+    }
 
-    this.drawer.start.disableClose = true;
-    this.drawer.end.disableClose = true;
 
     this.drawer.backdropClick.subscribe((e) => {
       if (this.isOpen) {
